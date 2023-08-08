@@ -1,4 +1,4 @@
-server/.idea
-server/venv
-server/.flaskenv
-server/__pycache__
+.idea/
+.flaskenv
+__pycache__/
+venv/
