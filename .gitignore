@@ -1,9 +1,1 @@
 .idea
-
-client/.idea
-client/node_modules
-
-server/.idea
-server/venv
-server/.flaskenv
-server/__pycache__

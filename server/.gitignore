@@ -1,0 +1,4 @@
+server/.idea
+server/venv
+server/.flaskenv
+server/__pycache__
