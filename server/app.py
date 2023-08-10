@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from flask import Flask
 from flask_smorest import Api
+from flask_cors import CORS
 
 from routes.user import blp as user_blueprint
 from dotenv import load_dotenv
@@ -16,6 +17,7 @@ from utils.jwt import jwt
 def create_app():
     app = Flask(__name__)
     load_dotenv()
+    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
     # configurations for the Swagger UI
     app.config["PROPAGATE_EXCEPTIONS"] = True

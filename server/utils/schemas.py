@@ -11,4 +11,14 @@ class UserSchemaLogin(Schema):
 
 class UserSchemaSignup(UserSchemaLogin):
     username = fields.Str(required=True, validate=validate.Length(max=100))
-    confirm_password = fields.Str(required=True, validate=validate.Length(max=256))
+    confirm_password = fields.Str(
+        required=True, load_only=True, validate=validate.Length(max=256)
+    )
+
+
+class UserResetPassword(Schema):
+    email = fields.Str(required=True, validate=validate.Length(max=150))
+
+
+class UserInformation(UserSchemaSignup):
+    pass
