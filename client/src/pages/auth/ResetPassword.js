@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -10,20 +10,49 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { Link } from "react-router-dom";
+import { json, Link, useFetcher } from "react-router-dom";
 import { Alert, Collapse } from "@mui/material";
 
 const defaultTheme = createTheme();
 
+const requestOptions = (email) => ({
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email: email,
+  }),
+});
+
 function ResetPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const fetcher = useFetcher();
+  const response = fetcher.data;
+  const isSubmitting = fetcher.state === "submitting";
+  const [successful, setSuccessful] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(email);
-    setError("1");
+    fetcher.submit(
+      { email: email },
+      { method: "post", action: "/reset-password" },
+    );
   };
+
+  useEffect(() => {
+    if (response && response["message"] && response["status"]) {
+      if (response["status"] === 400) {
+        setError(response.message);
+        setSuccessful("");
+      }
+      if (response["status"] === 200) {
+        setSuccessful(response.message);
+        setError("");
+      }
+    }
+  }, [response]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -43,10 +72,13 @@ function ResetPassword() {
           <Typography component="h1" variant="h5">
             Reset your password!
           </Typography>
-          <Collapse in={error !== ""}>
+          <Collapse in={error !== "" && successful === ""}>
             <Alert severity="error" onClose={() => setError("")}>
               {error}
             </Alert>
+          </Collapse>
+          <Collapse in={successful !== "" && error === ""}>
+            <Alert severity="success">{successful}</Alert>
           </Collapse>
           <Typography component="p" variant="p">
             You will be sent a link to reset the password.
@@ -76,6 +108,7 @@ function ResetPassword() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isSubmitting}
             >
               Send email
             </Button>
@@ -94,3 +127,19 @@ function ResetPassword() {
 }
 
 export default ResetPassword;
+
+export async function resetPasswordAction({ request }) {
+  try {
+    const email = (await request.formData()).get("email");
+    const response = await fetch(
+      "http://localhost:5000/api/reset-password",
+      requestOptions(email),
+    );
+    const data = await response.json();
+    if (response.status === 200 || response.status === 400)
+      return { status: response.status, message: data.message };
+  } catch (error) {
+    console.log(error);
+  }
+  throw json({ message: "There was a server error." }, { status: 500 });
+}

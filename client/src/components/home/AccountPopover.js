@@ -6,9 +6,19 @@ import {
   Popover,
   Typography,
 } from "@mui/material";
-import { removeToken } from "../../utils/token";
+import { getToken, removeToken } from "../../utils/token";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+
+const requestOptions = (token) => {
+  return {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
@@ -16,6 +26,7 @@ export const AccountPopover = (props) => {
   const userDetails = useSelector((state) => state.userDetails);
 
   const handleSignOut = () => {
+    fetch("http://localhost:5000/api/logout", requestOptions(getToken()));
     removeToken();
     navigate("/login");
   };
@@ -29,7 +40,6 @@ export const AccountPopover = (props) => {
       }}
       onClose={onClose}
       open={open}
-      PaperProps={{ sx: { width: 200 } }}
     >
       <Box
         sx={{

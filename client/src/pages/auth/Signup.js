@@ -9,8 +9,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import { json, Link, redirect, useFetcher } from "react-router-dom";
+import { json, Link, useFetcher } from "react-router-dom";
 import { Alert, Collapse } from "@mui/material";
 
 const defaultTheme = createTheme();
@@ -37,10 +38,18 @@ function Signup() {
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
   const response = fetcher.data;
+  const [successful, setSuccessful] = useState("");
 
   useEffect(() => {
-    if (response) {
-      setError(response.message);
+    if (response && response["message"] && response["status"]) {
+      if (response["status"] === 200) {
+        setSuccessful(response.message);
+        setError("");
+      }
+      if (response["status"] === 400) {
+        setError(response.message);
+        setSuccessful("");
+      }
     }
   }, [response]);
 
@@ -75,10 +84,19 @@ function Signup() {
           <Typography component="h1" variant="h5">
             Create your account!
           </Typography>
-          <Collapse in={error !== ""}>
+          <Collapse
+            in={error !== "" && successful === ""}
+            style={{ marginTop: "1rem" }}
+          >
             <Alert severity="error" onClose={() => setError("")}>
               {error}
             </Alert>
+          </Collapse>
+          <Collapse
+            in={successful !== "" && error === ""}
+            style={{ marginTop: "1rem" }}
+          >
+            <Alert severity="success">{successful}</Alert>
           </Collapse>
           <Box
             component="form"
@@ -141,15 +159,31 @@ function Signup() {
                 setPassword2(event.target.value);
               }}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isSubmitting}
-            >
-              Sign up
-            </Button>
+            {!successful && (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled={isSubmitting}
+              >
+                Sign up
+              </Button>
+            )}
+            {successful && (
+              <Link to="/login">
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={isSubmitting}
+                >
+                  Proceed to log in now
+                  <ArrowForwardIcon />
+                </Button>
+              </Link>
+            )}
             <Grid container>
               <Grid item>
                 <Link variant="body2" to="/login">
@@ -179,8 +213,8 @@ export async function signupAction({ request }) {
       ),
     );
     const data = await response.json();
-    if (response.status === 200) return redirect("/reset-password");
-    if (response.status === 400) return data;
+    if (response.status === 200 || response.status === 400)
+      return { status: response.status, message: data.message };
   } catch (error) {
     console.log(error);
   }

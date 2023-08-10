@@ -2,7 +2,7 @@ import React from "react";
 import Login, { loginAction } from "./pages/auth/Login";
 import Signup, { signupAction } from "./pages/auth/Signup";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ResetPassword from "./pages/auth/ResetPassword";
+import ResetPassword, { resetPasswordAction } from "./pages/auth/ResetPassword";
 import ErrorBoundary from "./pages/errors/ErrorBoundary";
 import Dashboard from "./pages/home/Dashboard";
 import Contacts from "./pages/home/Contacts";
@@ -47,6 +47,7 @@ const route = createBrowserRouter([
       {
         path: "/reset-password",
         element: <ResetPassword />,
+        action: resetPasswordAction,
       },
     ],
   },
