@@ -7,7 +7,12 @@ from flask_jwt_extended import (
 )
 
 from utils.blocklist import BLOCKLIST
-from utils.schemas import UserSchemaSignup, UserSchemaLogin, UserInformation, UserResetPassword
+from utils.schemas import (
+    UserSchemaSignup,
+    UserSchemaLogin,
+    UserInformation,
+    UserResetPassword,
+)
 from models import User
 from utils.db import db
 from sqlalchemy.exc import SQLAlchemyError
