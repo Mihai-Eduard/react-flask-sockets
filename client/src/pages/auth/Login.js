@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { json, Link, redirect, useFetcher } from "react-router-dom";
 import { Alert, Collapse } from "@mui/material";
+import { saveToken } from "../../utils/token";
 
 const defaultTheme = createTheme();
 
@@ -64,7 +65,7 @@ function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Connect to Your Account
+            Connect to your account!
           </Typography>
           <Collapse in={error !== ""}>
             <Alert severity="error" onClose={() => setError("")}>
@@ -143,7 +144,10 @@ export async function loginAction({ request }) {
       requestOptions(credentials.get("email"), credentials.get("password")),
     );
     const data = await response.json();
-    if (response.status === 200) return redirect("/signup");
+    if (response.status === 200) {
+      saveToken(data["token"]);
+      return redirect("/");
+    }
     if (response.status === 400) return data;
   } catch (error) {
     console.log(error);
