@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { json, useFetcher, useLocation, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate, useSubmit } from "react-router-dom";
 import Loading from "../utils/Loading";
 import HomeLayout from "./HomeLayout";
 import { getToken } from "../../utils/token";
@@ -21,11 +21,11 @@ const VerifyAccount = () => {
   const [content, setContent] = useState(<Loading />);
   const navigate = useNavigate();
   const location = useLocation();
-  const fetcher = useFetcher();
+  const submit = useSubmit();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("verifying...");
+    console.log("verifying the account...");
     const verifyUser = async () => {
       try {
         const response = await fetch(
@@ -33,7 +33,11 @@ const VerifyAccount = () => {
           requestOptions(getToken()),
         );
         const data = await response.json();
-        if (response.status === 401 || response.status === 422)
+        if (
+          response.status === 401 ||
+          response.status === 422 ||
+          response.status === 404
+        )
           return navigate("/login");
         if (response.status === 200) {
           console.log(data);
@@ -47,11 +51,11 @@ const VerifyAccount = () => {
       } catch (error) {
         console.log(error);
       }
-      fetcher.submit({}, { method: "post", action: "/" });
+      submit({}, { method: "post", action: "/" });
     };
 
     verifyUser();
-  }, [fetcher, navigate, dispatch]);
+  }, [submit, navigate, dispatch]);
 
   useEffect(() => {
     if (location.pathname === "/" && isLoading === false)

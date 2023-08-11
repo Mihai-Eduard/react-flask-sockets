@@ -10,7 +10,7 @@ import Settings from "./pages/home/Settings";
 import VerifyAccount, { verifyAccountAction } from "./pages/home/VerifyAccount";
 import { Provider } from "react-redux";
 import store from "./store";
-import Room from "./pages/home/Room";
+import VerifyRoom, { verifyRoomAction } from "./pages/room/VerifyRoom";
 import SocketProvider from "./context/SocketProvider";
 
 const router = createBrowserRouter([
@@ -37,7 +37,8 @@ const router = createBrowserRouter([
           },
           {
             path: "room/:id",
-            element: <Room />,
+            element: <VerifyRoom />,
+            action: verifyRoomAction,
           },
         ],
       },

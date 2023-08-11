@@ -27,7 +27,7 @@ const joinRoomRequestOptions = (token, room_id) => ({
   }),
 });
 
-const Dashboard = (props) => {
+const Dashboard = () => {
   const fetcher = useFetcher();
   const response = fetcher.data;
   const isSubmitting = fetcher.state === "submitting";
@@ -86,7 +86,7 @@ const Dashboard = (props) => {
               <div style={{ display: "flex" }}>
                 <TextField
                   id="standard-name"
-                  label="Room ID"
+                  label="VerifyRoom ID"
                   inputRef={roomIDInput}
                   InputProps={{
                     endAdornment: (
@@ -140,13 +140,13 @@ export async function dashboardActions({ request }) {
     if (action === "join") {
       const room_id = requestData.get("room_id");
       const response = await fetch(
-        "http://localhost:5000/api/room/verify",
+        "http://localhost:5000/api/room/join",
         joinRoomRequestOptions(getToken(), room_id),
       );
       console.log(room_id);
       const data = await response.json();
       if (response.status === 200) return redirect(`/room/${data["room_id"]}`);
-      if (response.status === 400)
+      if (response.status === 404)
         return { error: "There is no room with that id." };
     }
   } catch (error) {
