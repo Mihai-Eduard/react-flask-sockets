@@ -86,7 +86,7 @@ const Dashboard = () => {
               <div style={{ display: "flex" }}>
                 <TextField
                   id="standard-name"
-                  label="VerifyRoom ID"
+                  label="Room ID"
                   inputRef={roomIDInput}
                   InputProps={{
                     endAdornment: (
