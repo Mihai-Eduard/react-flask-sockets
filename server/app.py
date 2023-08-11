@@ -4,8 +4,10 @@ from datetime import timedelta
 from flask import Flask
 from flask_smorest import Api
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from routes.user import blp as user_blueprint
+from routes.room import blp as room_blueprint
 from dotenv import load_dotenv
 
 import models  # noqa - for creating the tables beforehand
@@ -37,8 +39,8 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
+    # set up the migrations of the database within the app
+    Migrate(app, db)
 
     # set up the secret key for our JWT and connect it to our Flask app
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
@@ -48,5 +50,6 @@ def create_app():
     # register all the routes created through blueprints
     api = Api(app)
     api.register_blueprint(user_blueprint, url_prefix="/api")
+    api.register_blueprint(room_blueprint, url_prefix="/api")
 
     return app

@@ -20,5 +20,9 @@ class UserResetPassword(Schema):
     email = fields.Str(required=True, validate=validate.Length(max=150))
 
 
+class RoomID(Schema):
+    room_id = fields.Str(required=True, validate=validate.Length(max=150))
+
+
 class UserInformation(UserSchemaSignup):
     pass

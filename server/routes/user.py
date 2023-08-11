@@ -5,6 +5,8 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt,
 )
+from flask_socketio import emit
+import threading
 
 from utils.blocklist import BLOCKLIST
 from utils.schemas import (
@@ -84,10 +86,16 @@ def user_logout():
     return {"message": "You have been successfully logged out."}, 200
 
 
+def emit_message():
+    emit("data1", {"message": "HI"})
+
+
 @blp.get("/user")
 @blp.response(200, UserInformation)
 @jwt_required()
 def get_user_information():
     user_id = get_jwt_identity()
     user = User.query.get_or_404(user_id)
+    thread = threading.Thread(target=emit_message)
+    thread.start()
     return user, 200
