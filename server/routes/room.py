@@ -1,4 +1,5 @@
 import uuid
+from threading import Thread
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_smorest import Blueprint, abort
@@ -7,8 +8,13 @@ from utils.db import db
 from utils.schemas.room_schemas import RoomIDSchema
 from models import User, Room, Message
 from utils.schemas.room_schemas import RoomSchema, MessageTextSchema
+from utils.socketio import socketio
 
 blp = Blueprint("Rooms", "rooms", "Operations on rooms.")
+
+
+def send_room_updates(room_id, room):
+    socketio.emit(f"room/{room_id}/messages", room)
 
 
 @blp.get("/room/create")
@@ -44,6 +50,10 @@ def join_room(data):
     db.session.add(room)
     db.session.commit()
 
+    room_schema = RoomSchema()
+    room = room_schema.dump(room)
+    Thread(target=send_room_updates, args=(data["room_id"], room)).start()
+
     return {"room_id": data["room_id"]}, 200
 
 
@@ -59,12 +69,16 @@ def get_room(room_id):
 @jwt_required()
 @blp.arguments(MessageTextSchema)
 def send_message(data, room_id):
-    Room.query.get_or_404(room_id)
+    room = Room.query.get_or_404(room_id)
     user_id = get_jwt_identity()
     User.query.get_or_404(user_id)
 
     message = Message(text=data["text"], sender_id=user_id, room_id=room_id)
     db.session.add(message)
     db.session.commit()
+
+    room_schema = RoomSchema()
+    room = room_schema.dump(room)
+    Thread(target=send_room_updates, args=(room_id, room)).start()
 
     return {"message": "Message sent."}, 200
