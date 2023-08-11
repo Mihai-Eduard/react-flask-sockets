@@ -3,7 +3,7 @@ import { useRouteError } from "react-router-dom";
 import PageNotFound from "./PageNotFound";
 import InternalServerError from "./InternalServerError";
 
-const ErrorBoundary = () => {
+const ActionErrorBoundary = () => {
   const error = useRouteError();
   useEffect(() => {
     console.log(error);
@@ -14,4 +14,4 @@ const ErrorBoundary = () => {
   return <div>{error.status}</div>;
 };
 
-export default ErrorBoundary;
+export default ActionErrorBoundary;

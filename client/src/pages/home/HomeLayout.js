@@ -6,14 +6,35 @@ import Toolbar from "@mui/material/Toolbar";
 import TopBar from "../../components/home/TopBar";
 import SideBar from "../../components/home/SideBar";
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { io } from "socket.io-client";
+import { getToken } from "../../utils/token";
+import { useDispatch } from "react-redux";
+import { useSocket } from "../../context/SocketProvider";
 
 const SIDE_BAR_OPEN_WIDTH = 240;
 const SIDE_BAR_CLOSE_WIDTH = 24;
 
 const defaultTheme = createTheme();
 
+const options = (token) => {
+  return {
+    extraHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
 export default function HomeLayout() {
   const [isSideBarOpen, setIsSideBarOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const { setSocket } = useSocket();
+
+  useEffect(() => {
+    const socket = io("http://localhost:5000", options(getToken()));
+    setSocket(socket);
+  }, [dispatch, setSocket]);
+
   const toggleSideBar = () => {
     setIsSideBarOpen(!isSideBarOpen);
   };

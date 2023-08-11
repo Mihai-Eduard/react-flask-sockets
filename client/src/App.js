@@ -3,17 +3,19 @@ import Login, { loginAction } from "./pages/auth/Login";
 import Signup, { signupAction } from "./pages/auth/Signup";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ResetPassword, { resetPasswordAction } from "./pages/auth/ResetPassword";
-import ErrorBoundary from "./pages/errors/ErrorBoundary";
-import Dashboard from "./pages/home/Dashboard";
+import ActionErrorBoundary from "./pages/errors/ActionErrorBoundary";
+import Dashboard, { dashboardActions } from "./pages/home/Dashboard";
 import Contacts from "./pages/home/Contacts";
 import Settings from "./pages/home/Settings";
 import VerifyAccount, { verifyAccountAction } from "./pages/home/VerifyAccount";
 import { Provider } from "react-redux";
 import store from "./store";
+import Room from "./pages/home/Room";
+import SocketProvider from "./context/SocketProvider";
 
-const route = createBrowserRouter([
+const router = createBrowserRouter([
   {
-    errorElement: <ErrorBoundary />,
+    errorElement: <ActionErrorBoundary />,
     children: [
       {
         path: "/",
@@ -23,6 +25,7 @@ const route = createBrowserRouter([
           {
             path: "dashboard",
             element: <Dashboard />,
+            action: dashboardActions,
           },
           {
             path: "contacts",
@@ -31,6 +34,10 @@ const route = createBrowserRouter([
           {
             path: "settings",
             element: <Settings />,
+          },
+          {
+            path: "room/:id",
+            element: <Room />,
           },
         ],
       },
@@ -56,7 +63,9 @@ const route = createBrowserRouter([
 function App() {
   return (
     <Provider store={store}>
-      <RouterProvider router={route} />
+      <SocketProvider>
+        <RouterProvider router={router} />
+      </SocketProvider>
     </Provider>
   );
 }
