@@ -9,11 +9,11 @@ from flask_socketio import emit
 import threading
 
 from utils.blocklist import BLOCKLIST
-from utils.schemas import (
-    UserSchemaSignup,
-    UserSchemaLogin,
-    UserInformation,
-    UserResetPassword,
+from utils.schemas.auth_schemas import (
+    UserSignupSchema,
+    UserLoginSchema,
+    UserInformationSchema,
+    UserResetPasswordSchema,
 )
 from models import User
 from utils.db import db
@@ -29,7 +29,7 @@ email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
 
 @blp.post("/login")
-@blp.arguments(UserSchemaLogin)
+@blp.arguments(UserLoginSchema)
 def user_login(user_data):
     user = User.query.filter(User.email == user_data["email"]).first()
     if not user:
@@ -42,7 +42,7 @@ def user_login(user_data):
 
 
 @blp.post("/signup")
-@blp.arguments(UserSchemaSignup)
+@blp.arguments(UserSignupSchema)
 def user_signup(user_data):
     if len(user_data["username"]) < 5 or len(user_data["username"]) > 17:
         abort(400, message="The username must be between 5 and 17 characters long.")
@@ -71,7 +71,7 @@ def user_signup(user_data):
 
 
 @blp.post("/reset-password")
-@blp.arguments(UserResetPassword)
+@blp.arguments(UserResetPasswordSchema)
 def reset_password(user_data):
     if not User.query.filter(User.email == user_data["email"]).first():
         abort(400, message="A user with that email doesn't exist.")
@@ -91,7 +91,7 @@ def emit_message():
 
 
 @blp.get("/user")
-@blp.response(200, UserInformation)
+@blp.response(200, UserInformationSchema)
 @jwt_required()
 def get_user_information():
     user_id = get_jwt_identity()

@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validate
 
 
-class UserSchemaLogin(Schema):
+class UserLoginSchema(Schema):
     id = fields.Str(dump_only=True)
     email = fields.Str(required=True, validate=validate.Length(max=150))
     password = fields.Str(
@@ -9,20 +9,21 @@ class UserSchemaLogin(Schema):
     )
 
 
-class UserSchemaSignup(UserSchemaLogin):
+class UserSignupSchema(UserLoginSchema):
     username = fields.Str(required=True, validate=validate.Length(max=100))
     confirm_password = fields.Str(
         required=True, load_only=True, validate=validate.Length(max=256)
     )
 
 
-class UserResetPassword(Schema):
+class UserResetPasswordSchema(Schema):
     email = fields.Str(required=True, validate=validate.Length(max=150))
 
 
-class RoomID(Schema):
-    room_id = fields.Str(required=True, validate=validate.Length(max=150))
-
-
-class UserInformation(UserSchemaSignup):
+class UserInformationSchema(UserSignupSchema):
     pass
+
+
+class PlainUserSchema(Schema):
+    id = fields.Str(dump_only=True)
+    username = fields.Str(required=True, validate=validate.Length(max=100))
