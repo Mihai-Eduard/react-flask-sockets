@@ -31,8 +31,8 @@ export default function HomeLayout() {
   const { setSocket } = useSocket();
 
   useEffect(() => {
-    // const socket = io("http://localhost:5000", options(getToken()));
-    // setSocket(socket);
+    const socket = io("http://localhost:5000", options(getToken()));
+    setSocket(socket);
   }, [dispatch, setSocket]);
 
   const toggleSideBar = () => {

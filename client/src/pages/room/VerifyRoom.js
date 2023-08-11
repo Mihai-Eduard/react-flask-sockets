@@ -3,6 +3,8 @@ import { json, useLocation, useSubmit } from "react-router-dom";
 import Loading from "../utils/Loading";
 import { getToken } from "../../utils/token";
 import RoomLayout from "./RoomLayout";
+import { useDispatch } from "react-redux";
+import { roomActions } from "../../store/room-slice";
 
 function getRoomID(url) {
   return url.split("/")[2];
@@ -22,6 +24,7 @@ const VerifyRoom = () => {
   const [content, setContent] = useState(<Loading />);
   const location = useLocation();
   const submit = useSubmit();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     console.log("verifying the room...");
@@ -36,7 +39,8 @@ const VerifyRoom = () => {
         const data = await response.json();
         console.log(data);
         if (response.status === 200) {
-          setContent(<RoomLayout room={data} />);
+          dispatch(roomActions.setRoom(data));
+          setContent(<RoomLayout />);
           return;
         }
       } catch (error) {
@@ -49,7 +53,7 @@ const VerifyRoom = () => {
     };
 
     verifyRoom();
-  }, [submit, location.pathname]);
+  }, [submit, location.pathname, dispatch]);
 
   return content;
 };
