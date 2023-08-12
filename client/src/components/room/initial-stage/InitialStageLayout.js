@@ -10,7 +10,12 @@ import OwnerContainer from "./OwnerContainer";
 import UsersContainer from "./UsersContainer";
 import MessagesContainer from "./MessagesContainer";
 
-const InitialStageLayout = () => {
+const InitialStageLayout = ({
+  startRaceHandler,
+  setIsRace,
+  isSubmitting,
+  error,
+}) => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
   const room = useSelector((state) => state.room);
@@ -23,22 +28,31 @@ const InitialStageLayout = () => {
       socket.on(`room/${roomID}/messages`, (room) => {
         dispatch(roomActions.setRoom(room));
       });
+      socket.on(`room/${roomID}/activate`, (data) => {
+        if (data["message"] === "Room started.") setIsRace(true);
+      });
 
       return () => {
         socket.off(`room/${roomID}/messages`);
+        socket.off(`room/${roomID}/activate`);
       };
     } catch (error) {
       console.log(error);
     }
     submit({ status: 500 }, { method: "post", action: `/room/${roomID}` });
-  }, [socket, dispatch, roomID, submit]);
+  }, [socket, dispatch, roomID, submit, setIsRace]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         <RoomIDContainer roomID={roomID} />
         <OwnerContainer username={room["owner"].username} />
-        <UsersContainer users={room["users"]} />
+        <UsersContainer
+          users={room["users"]}
+          startRaceHandler={startRaceHandler}
+          isSubmitting={isSubmitting}
+          error={error}
+        />
         <MessagesContainer messages={room["messages"]} roomID={roomID} />
       </Grid>
     </Container>

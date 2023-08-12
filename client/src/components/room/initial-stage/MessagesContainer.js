@@ -64,6 +64,7 @@ const MessagesContainer = ({ messages, roomID }) => {
           {messages.map((message) => (
             <p
               key={message.id}
+              style={{ margin: "0.5rem" }}
             >{`${message.sender.username}: ${message.text}`}</p>
           ))}
         </div>

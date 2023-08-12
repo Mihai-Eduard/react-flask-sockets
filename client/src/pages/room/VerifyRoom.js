@@ -10,7 +10,7 @@ function getRoomID(url) {
   return url.split("/")[2];
 }
 
-const requestOptions = (token) => {
+const getRoomRequestOptions = (token) => {
   return {
     method: "GET",
     headers: {
@@ -34,7 +34,7 @@ const VerifyRoom = () => {
       try {
         response = await fetch(
           `http://localhost:5000/api/room/${room_id}`,
-          requestOptions(getToken()),
+          getRoomRequestOptions(getToken()),
         );
         const data = await response.json();
         console.log(data);
