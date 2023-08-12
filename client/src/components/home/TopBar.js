@@ -67,7 +67,7 @@ const TopBar = ({
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          App
+          RaceApp
         </Typography>
         <IconButton color="inherit" style={{ marginRight: "1rem" }}>
           <Badge badgeContent={0} color="secondary">

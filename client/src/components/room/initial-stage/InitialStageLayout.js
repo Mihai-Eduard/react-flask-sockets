@@ -15,6 +15,7 @@ const InitialStageLayout = ({
   setIsRace,
   isSubmitting,
   error,
+  setTotalTime,
 }) => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
@@ -29,7 +30,10 @@ const InitialStageLayout = ({
         dispatch(roomActions.setRoom(room));
       });
       socket.on(`room/${roomID}/activate`, (data) => {
-        if (data["message"] === "Room started.") setIsRace(true);
+        if (data["message"] === "Room started.") {
+          setTotalTime(data["total_time"]);
+          setIsRace(true);
+        }
       });
 
       return () => {
@@ -40,7 +44,7 @@ const InitialStageLayout = ({
       console.log(error);
     }
     submit({ status: 500 }, { method: "post", action: `/room/${roomID}` });
-  }, [socket, dispatch, roomID, submit, setIsRace]);
+  }, [socket, dispatch, roomID, submit, setIsRace, setTotalTime]);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

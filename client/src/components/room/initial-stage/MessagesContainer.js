@@ -32,7 +32,6 @@ const MessagesContainer = ({ messages, roomID }) => {
       postMessageRequestOptions(getToken(), textMessage),
     )
       .then((response) => {
-        console.log(response);
         if (response.status !== 200) throw new Error(String(response.status));
       })
       .catch((error) => {
@@ -62,10 +61,11 @@ const MessagesContainer = ({ messages, roomID }) => {
         <p>Messages:</p>
         <div style={{ overflowY: "scroll", flexGrow: 1 }} ref={scrollRef}>
           {messages.map((message) => (
-            <p
-              key={message.id}
-              style={{ margin: "0.5rem" }}
-            >{`${message.sender.username}: ${message.text}`}</p>
+            <p key={message.id} style={{ margin: "0.5rem" }}>
+              {message["is_join_or_create_room"] === 0
+                ? `${message.sender.username}: ${message.text}`
+                : `${message.text}`}
+            </p>
           ))}
         </div>
         <TextField

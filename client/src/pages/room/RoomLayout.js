@@ -1,6 +1,6 @@
 import React from "react";
 import InitialStageLayout from "../../components/room/initial-stage/InitialStageLayout";
-import RaceLayout from "../../components/room/initial-stage/RaceLayout";
+import RaceLayout from "../../components/room/race/RaceLayout";
 import { useSelector } from "react-redux";
 import { getToken } from "../../utils/token";
 import { useSubmit } from "react-router-dom";
@@ -21,6 +21,7 @@ const RoomLayout = () => {
   const submit = useSubmit();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [totalTime, setTotalTime] = React.useState(0);
 
   const startRaceHandler = () => {
     setIsSubmitting(true);
@@ -53,11 +54,11 @@ const RoomLayout = () => {
           setIsRace={setIsRace}
           isSubmitting={isSubmitting}
           error={error}
+          setTotalTime={setTotalTime}
         />
       )}
-      {isRace && <RaceLayout />}
+      {isRace && <RaceLayout totalTime={totalTime} setIsRace={setIsRace} />}
     </>
   );
 };
-
 export default RoomLayout;

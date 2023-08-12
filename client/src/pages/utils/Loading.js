@@ -1,7 +1,8 @@
 import React from "react";
 import { CircularProgress } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
-const Loading = () => {
+const Loading = ({text}) => {
   return (
     <div
       style={{
@@ -14,7 +15,7 @@ const Loading = () => {
     >
       <div style={{ width: "100vh", display: "flex", flexDirection: "column" }}>
         <CircularProgress style={{ alignSelf: "center" }} />
-        <p style={{ alignSelf: "center" }}>Loading...</p>
+        <Typography style={{ alignSelf: "center" }}>{text || "Loading..."}</Typography>
       </div>
     </div>
   );
